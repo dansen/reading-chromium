@@ -90,10 +90,12 @@ bool ClientPaintCache::PurgeAll() {
 ServicePaintCache::ServicePaintCache() = default;
 ServicePaintCache::~ServicePaintCache() = default;
 
+// 缓存 SkPath
 void ServicePaintCache::PutPath(PaintCacheId id, SkPath path) {
   cached_paths_.emplace(id, std::move(path));
 }
 
+// 获取缓存的 SkPath
 bool ServicePaintCache::GetPath(PaintCacheId id, SkPath* path) const {
   auto it = cached_paths_.find(id);
   if (it == cached_paths_.end())
