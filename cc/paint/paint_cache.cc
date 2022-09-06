@@ -104,6 +104,7 @@ bool ServicePaintCache::GetPath(PaintCacheId id, SkPath* path) const {
   return true;
 }
 
+// 清除所有缓存
 void ServicePaintCache::Purge(PaintCacheDataType type,
                               size_t n,
                               const volatile PaintCacheId* ids) {
