@@ -29,6 +29,7 @@ GrContextForGLES2Interface::GrContextForGLES2Interface(
     size_t max_glyph_cache_texture_bytes,
     bool support_bilerp_from_flyph_atlas)
     : context_support_(context_support) {
+  // 
   GrContextOptions options;
   options.fGlyphCacheTextureMaximumBytes = max_glyph_cache_texture_bytes;
   options.fAvoidStencilBuffers = capabilities.avoid_stencil_buffers;
@@ -40,8 +41,11 @@ GrContextForGLES2Interface::GrContextForGLES2Interface(
   options.fSupportBilerpFromGlyphAtlas = support_bilerp_from_flyph_atlas;
   sk_sp<GrGLInterface> interface(
       skia_bindings::CreateGLES2InterfaceBindings(gl, context_support));
+
+  // GrDirectContext 是skia层的接口
   gr_context_ = GrDirectContext::MakeGL(std::move(interface), options);
   if (gr_context_) {
+    // 设置资源限制
     gr_context_->setResourceCacheLimit(max_resource_cache_bytes);
     context_support_->SetGrContext(gr_context_.get());
   }
@@ -51,6 +55,7 @@ GrContextForGLES2Interface::~GrContextForGLES2Interface() {
   // At this point the GLES2Interface is going to be destroyed, so have
   // the GrContext clean up and not try to use it anymore.
   if (gr_context_) {
+    // 销毁资源
     gr_context_->releaseResourcesAndAbandonContext();
     context_support_->SetGrContext(nullptr);
   }

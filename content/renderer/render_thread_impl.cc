@@ -281,6 +281,7 @@ void AddCrashKey(v8::CrashKeyId id, const std::string& value) {
   }
 }
 
+// 创建一个off screen context
 scoped_refptr<viz::ContextProviderCommandBuffer> CreateOffscreenContext(
     scoped_refptr<gpu::GpuChannelHost> gpu_channel_host,
     gpu::GpuMemoryBufferManager* gpu_memory_buffer_manager,
@@ -982,6 +983,7 @@ int RenderThreadImpl::PostTaskToAllWebWorkers(base::RepeatingClosure closure) {
       std::move(closure));
 }
 
+// 获取 GpuVideoAcceleratorFactories 对象
 media::GpuVideoAcceleratorFactories* RenderThreadImpl::GetGpuFactories() {
   DCHECK(IsMainThread());
 
@@ -1072,6 +1074,7 @@ media::GpuVideoAcceleratorFactories* RenderThreadImpl::GetGpuFactories() {
   gpu_->CreateVideoEncodeAcceleratorProvider(
       vea_provider.InitWithNewPipeAndPassReceiver());
 
+  // 创建 GpuVideoAcceleratorFactoriesImpl 后加入到 gpu_factories_中
   gpu_factories_.push_back(GpuVideoAcceleratorFactoriesImpl::Create(
       std::move(gpu_channel_host), base::ThreadTaskRunnerHandle::Get(),
       GetMediaThreadTaskRunner(), std::move(media_context_provider),

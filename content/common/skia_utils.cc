@@ -62,6 +62,7 @@ void InitializeSkia() {
   }
 #endif
 
+  // 设置字体缓存大小
   if (base::FeatureList::IsEnabled(kSmallerFontCache)) {
     // Could also reduce the maximum number of cached strikes, but the intent
     // being to reduce memory usage, only control cache memory usage.

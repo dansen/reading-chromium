@@ -173,6 +173,7 @@ class CONTENT_EXPORT RenderFrameImpl
       public blink::WebLocalFrameClient,
       service_manager::mojom::InterfaceProvider {
  public:
+  // 创建对象
   // Creates a new RenderFrame as the main frame of `web_view`.
   static RenderFrameImpl* CreateMainFrame(
       AgentSchedulingGroup& agent_scheduling_group,
