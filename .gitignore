@@ -48,3 +48,4 @@
 /webkit/data/xbm_decoder/
 /xcodebuild/
 SConstruct
+.vscode/
