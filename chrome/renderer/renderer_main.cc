@@ -65,6 +65,7 @@ static void HandleRendererErrorTestParameters(const CommandLine& command_line) {
 
 // mainline routine for running as the Renderer process
 int RendererMain(const MainFunctionParams& parameters) {
+  // 命令行解析
   const CommandLine& parsed_command_line = parameters.command_line_;
   base::ScopedNSAutoreleasePool* pool = parameters.autorelease_pool_;
 
@@ -87,6 +88,7 @@ int RendererMain(const MainFunctionParams& parameters) {
   // The main thread of the renderer services IO.
   MessageLoopForIO main_message_loop;
   std::wstring app_name = chrome::kBrowserAppName;
+  // 设置线程名称
   PlatformThread::SetName(WideToASCII(app_name + L"_RendererMain").c_str());
 
   // Initialize the SystemMonitor
@@ -115,20 +117,25 @@ int RendererMain(const MainFunctionParams& parameters) {
   }
 
   {
+    // 创建 RenderProcess
     RenderProcess render_process;
+
     bool run_loop = true;
+
     if (!no_sandbox) {
       run_loop = platform.EnableSandbox();
     }
 
     platform.RunSandboxTests();
 
+    // 启动时间计数
     startup_timer.Stop();  // End of Startup Time Measurement.
 
     if (run_loop) {
       // Load the accelerator table from the browser executable and tell the
       // message loop to use it when translating messages.
       if (pool) pool->Recycle();
+      // 进入 loop
       MessageLoop::current()->Run();
     }
   }

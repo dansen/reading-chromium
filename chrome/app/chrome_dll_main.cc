@@ -70,9 +70,16 @@
 #include "third_party/WebKit/WebKit/mac/WebCoreSupport/WebSystemInterface.h"
 #endif
 
+// 浏览器进程
 extern int BrowserMain(const MainFunctionParams&);
+
+// 渲染进程
 extern int RendererMain(const MainFunctionParams&);
+
+// 插件进程
 extern int PluginMain(const MainFunctionParams&);
+
+// 
 extern int WorkerMain(const MainFunctionParams&);
 extern int UtilityMain(const MainFunctionParams&);
 extern int ZygoteMain(const MainFunctionParams&);
@@ -472,7 +479,10 @@ int ChromeMain(int argc, const char** argv) {
 
   // TODO(port): turn on these main() functions as they've been de-winified.
   int rv = -1;
+  
+  // 使用namespace的switches，process_type是字符串
   if (process_type == switches::kRendererProcess) {
+    // 进入渲染进程
     rv = RendererMain(main_params);
   } else if (process_type == switches::kPluginProcess) {
     rv = PluginMain(main_params);

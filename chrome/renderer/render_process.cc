@@ -147,7 +147,7 @@ bool RenderProcess::InProcessPlugins() {
 
 // -----------------------------------------------------------------------------
 // Platform specific code for dealing with bitmap transport...
-
+// win32/linux/macos
 TransportDIB* RenderProcess::CreateTransportDIB(size_t size) {
 #if defined(OS_WIN) || defined(OS_LINUX)
   // Windows and Linux create transport DIBs inside the renderer

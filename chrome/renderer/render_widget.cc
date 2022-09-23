@@ -357,6 +357,7 @@ void RenderWidget::PaintRect(const gfx::Rect& rect,
   canvas->getTopPlatformDevice().accessBitmap(false);
 }
 
+// 最终绘制
 void RenderWidget::DoDeferredPaint() {
   if (!webwidget_ || paint_reply_pending() || paint_rect_.IsEmpty())
     return;
@@ -390,6 +391,7 @@ void RenderWidget::DoDeferredPaint() {
   damaged_rect.set_width(canvas->getDevice()->width());
   damaged_rect.set_height(canvas->getDevice()->height());
 
+  // 将 damaged_rect 区域内的数据绘制到 canvas 上
   PaintRect(damaged_rect, canvas);
 
   ViewHostMsg_PaintRect_Params params;
@@ -397,6 +399,7 @@ void RenderWidget::DoDeferredPaint() {
   params.view_size = size_;
   params.plugin_window_moves = plugin_window_moves_;
   params.flags = next_paint_flags_;
+  // UI进程需要的位图 TransportDIB
   params.bitmap = current_paint_buf_->id();
 
   delete canvas;
@@ -404,12 +407,14 @@ void RenderWidget::DoDeferredPaint() {
   plugin_window_moves_.clear();
 
   paint_reply_pending_ = true;
+  // 给 UI进程发送渲染数据
   Send(new ViewHostMsg_PaintRect(routing_id_, params));
   next_paint_flags_ = 0;
 
   UpdateIME();
 }
 
+// 滚动时调用
 void RenderWidget::DoDeferredScroll() {
   if (!webwidget_ || scroll_reply_pending() || scroll_rect_.IsEmpty())
     return;
@@ -497,10 +502,14 @@ void RenderWidget::DoDeferredScroll() {
 ///////////////////////////////////////////////////////////////////////////////
 // WebWidgetDelegate
 
+// 重新绘制请求
+// paint_rect_ 是最终要渲染的大小
 void RenderWidget::didInvalidateRect(const WebRect& rect) {
+  // 最多pending一次 DoDeferredPaint
   // We only want one pending DoDeferredPaint call at any time...
   bool paint_pending = !paint_rect_.IsEmpty();
 
+  // 使用 scroll_rect_
   // If this invalidate overlaps with a pending scroll, then we have to
   // downgrade to invalidating the scroll rect.
   if (gfx::Rect(rect).Intersects(scroll_rect_)) {
@@ -508,6 +517,7 @@ void RenderWidget::didInvalidateRect(const WebRect& rect) {
     scroll_rect_ = gfx::Rect();
   }
 
+  // 窗口view的大小
   gfx::Rect view_rect(0, 0, size_.width(), size_.height());
   // TODO(iyengar) Investigate why we have painting issues when
   // we ignore invalid regions outside the view.
@@ -519,6 +529,7 @@ void RenderWidget::didInvalidateRect(const WebRect& rect) {
   if (paint_rect_.IsEmpty() || paint_reply_pending() || paint_pending)
     return;
 
+  // 异步绘制
   // Perform painting asynchronously.  This serves two purposes:
   // 1) Ensures that we call WebView::Paint without a bunch of other junk
   //    on the call stack.
